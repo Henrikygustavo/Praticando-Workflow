@@ -1,4 +1,4 @@
-name: CI Pipeline PHP
+name: CI/CD Pipeline PHP
 
 on:
   push:
@@ -42,3 +42,23 @@ jobs:
 
       - name: Executar testes
         run: vendor/bin/phpunit --testdox
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configurar chave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Enviar arquivos via SSH
+        run: rsync -avz --delete ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/
+
+      - name: Reiniciar Servidor (Opcional)
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart apache2"
