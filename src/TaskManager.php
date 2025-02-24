@@ -1,33 +1,26 @@
 <?php
 
-require_once "Database.php";
 require_once "Task.php";
 
-class TaskManager {
-    private $pdo;
+class TaskManager
+{
+    private array $tasks = [];
 
-    public function __construct() {
-        $this->pdo = Database::getInstance()->getConnection();
+    public function addTask(string $title, string $description): void
+    {
+        $this->tasks[] = new Task($title, $description);
     }
 
-    public function addTask($title) {
-        $stmt = $this->pdo->prepare("INSERT INTO tasks (title) VALUES (:title)");
-        $stmt->execute(['title' => $title]);
-        return $this->pdo->lastInsertId();
+    public function getTasks(): array
+    {
+        return $this->tasks;
     }
 
-    public function getTasks() {
-        $task = new Task("Título da Tarefa", "Descrição da tarefa");
-    }
-
-    public function markAsCompleted($id) {
-        $stmt = $this->pdo->prepare("UPDATE tasks SET completed = 1 WHERE id = :id");
-        return $stmt->execute(['id' => $id]);
-    }
-
-    public function deleteTask($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM tasks WHERE id = :id");
-        return $stmt->execute(['id' => $id]);
+    public function deleteTask(int $index): void
+    {
+        if (isset($this->tasks[$index])) {
+            unset($this->tasks[$index]);
+            $this->tasks = array_values($this->tasks); // Reindexar array
+        }
     }
 }
-?>
