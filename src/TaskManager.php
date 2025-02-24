@@ -17,8 +17,7 @@ class TaskManager {
     }
 
     public function getTasks() {
-        $stmt = $this->pdo->query("SELECT * FROM tasks");
-        return $stmt->fetchAll(PDO::FETCH_CLASS, "Task");
+        $task = new Task("Título da Tarefa", "Descrição da tarefa");
     }
 
     public function markAsCompleted($id) {
