@@ -1,14 +1,15 @@
 <?php
 
-class Task {
-    public $id;
-    public $title;
-    public $completed;
+class Task
+{
+    private string $title;
+    private string $description;
 
-    public function __construct($id, $title, $completed = false) {
-        $this->id = $id;
+    public function __construct(string $title, string $description)
+    {
         $this->title = $title;
-        $this->completed = $completed;
+        $this->description = $description;
     }
 }
+
 ?>
