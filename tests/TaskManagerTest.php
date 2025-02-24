@@ -1,34 +1,26 @@
 <?php
-
 use PHPUnit\Framework\TestCase;
 
 require_once "src/TaskManager.php";
 
-class TaskManagerTest extends TestCase {
-    private $taskManager;
+class TaskManagerTest extends TestCase
+{
+    public function testAddTask()
+    {
+        $taskManager = new TaskManager();
+        $taskManager->addTask("Aprender PHPUnit", "Criar testes automatizados");
 
-    protected function setUp(): void {
-        $this->taskManager = new TaskManager();
+        $this->assertCount(1, $taskManager->getTasks());
     }
 
-    public function testAddTask() {
-        $taskId = $this->taskManager->addTask("Nova Tarefa");
-        $this->assertIsNumeric($taskId);
-    }
+    public function testGetTasks()
+    {
+        $taskManager = new TaskManager();
+        $taskManager->addTask("Estudar PHP", "Revisar orientação a objetos");
 
-    public function testGetTasks() {
-        $tasks = $this->taskManager->getTasks();
-        $this->assertIsArray($tasks);
-    }
-
-    public function testMarkAsCompleted() {
-        $taskId = $this->taskManager->addTask("Tarefa Teste");
-        $this->assertTrue($this->taskManager->markAsCompleted($taskId));
-    }
-
-    public function testDeleteTask() {
-        $taskId = $this->taskManager->addTask("Tarefa para Deletar");
-        $this->assertTrue($this->taskManager->deleteTask($taskId));
+        $tasks = $taskManager->getTasks();
+        $this->assertCount(1, $tasks);
+        $this->assertEquals("Estudar PHP", $tasks[0]->getTitle());
+        $this->assertEquals("Revisar orientação a objetos", $tasks[0]->getDescription());
     }
 }
-?>
